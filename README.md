@@ -13,8 +13,9 @@
 7. 保存草稿箱并在后台管理
 
 ## 视图展示
-<img width="1909" height="862" alt="image" src="https://github.com/user-attachments/assets/52637a5c-1cb0-4d70-907b-8c62f2cbf9ec" />
-<img width="1919" height="860" alt="image" src="https://github.com/user-attachments/assets/01eabbc1-b6c3-4909-abc2-c7fdb3004759" />
+<img width="1911" height="821" alt="image" src="https://github.com/user-attachments/assets/9f3e085b-db45-49f3-99c5-a09b412ed869" />
+
+<img width="1914" height="880" alt="image" src="https://github.com/user-attachments/assets/87be4cec-bfe2-4966-859f-142117ca0953" />
 
 ## 项目结构
 
