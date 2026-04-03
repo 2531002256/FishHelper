@@ -1,0 +1,7 @@
+{
+  "name": "fishhelper-mvp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Local-first Chrome Extension MVP for product sourcing and listing preparation."
+}

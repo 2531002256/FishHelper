@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "FishHelper MVP",
+  "version": "0.1.0",
+  "description": "Identify product pages, collect data, score profit, generate listing copy, and manage drafts.",
+  "icons": {
+    "16": "assets/logo.png",
+    "32": "assets/logo.png",
+    "48": "assets/logo.png",
+    "128": "assets/logo.png"
+  },
+  "permissions": ["storage", "activeTab", "tabs"],
+  "host_permissions": [
+    "https://*.goofish.com/*",
+    "https://*.xianyu.com/*",
+    "https://*.2.taobao.com/*",
+    "https://*.1688.com/*",
+    "https://*.yangkeduo.com/*",
+    "https://*.pinduoduo.com/*",
+    "https://*.taobao.com/*"
+  ],
+  "action": {
+    "default_title": "FishHelper MVP",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/logo.png",
+      "32": "assets/logo.png",
+      "48": "assets/logo.png"
+    }
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.goofish.com/*",
+        "https://*.xianyu.com/*",
+        "https://*.2.taobao.com/*",
+        "https://*.1688.com/*",
+        "https://*.yangkeduo.com/*",
+        "https://*.pinduoduo.com/*",
+        "https://*.taobao.com/*"
+      ],
+      "js": ["content-script.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>闲鱼选品上品助手</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="popup">
+    <div class="app-shell popup-shell">
+      <header class="hero-card compact">
+        <div class="brand-cluster">
+          <img class="brand-logo popup-logo" src="assets/logo.png" alt="FishHelper logo" />
+          <div>
+            <p class="eyebrow">FishHelper MVP</p>
+            <h1>闲鱼选品上品助手</h1>
+            <p class="hero-copy">把“识别商品 → 算利润 → 生成上架草稿”收进一个插件里。</p>
+          </div>
+        </div>
+        <button id="refreshPage" class="ghost-button">重新识别</button>
+      </header>
+
+      <section class="metric-strip">
+        <article class="metric-pill">
+          <span>商品库</span>
+          <strong id="metricProducts">0</strong>
+        </article>
+        <article class="metric-pill">
+          <span>高分品</span>
+          <strong id="metricHighScore">0</strong>
+        </article>
+        <article class="metric-pill">
+          <span>草稿箱</span>
+          <strong id="metricDrafts">0</strong>
+        </article>
+        <article class="metric-pill">
+          <span>待上架</span>
+          <strong id="metricPending">0</strong>
+        </article>
+      </section>
+
+      <div id="statusBanner" class="status-banner info">正在识别当前页面商品信息...</div>
+
+      <nav class="tab-grid">
+        <button class="tab-button active" data-tab="current">当前商品</button>
+        <button class="tab-button" data-tab="analysis">选品分析</button>
+        <button class="tab-button" data-tab="content">上品内容</button>
+        <button class="tab-button" data-tab="library">商品库</button>
+      </nav>
+
+      <main class="panel-stack">
+        <section class="panel active" data-panel="current">
+          <div id="currentProductCard" class="stack"></div>
+          <div class="button-row">
+            <button id="collectProduct" class="primary-button">采集商品</button>
+            <button id="jumpToAnalysis" class="secondary-button">立即分析</button>
+            <button id="openDashboard" class="ghost-button">打开后台</button>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="analysis">
+          <div class="section-card">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">利润测算</p>
+                <h2>先把利润和风险跑出来</h2>
+              </div>
+              <button id="recalculate" class="ghost-button">重新计算</button>
+            </div>
+
+            <form id="analysisForm" class="form-grid">
+              <label>货源成本<input id="costPrice" type="number" min="0" step="0.01" /></label>
+              <label>运费<input id="shippingFee" type="number" min="0" step="0.01" /></label>
+              <label>包装成本<input id="packagingFee" type="number" min="0" step="0.01" /></label>
+              <label>预计售价<input id="expectedSalePrice" type="number" min="0" step="0.01" /></label>
+              <label>议价空间<input id="bargainingRate" type="number" min="0" max="0.5" step="0.01" /></label>
+              <label>
+                需求强度
+                <select id="demandLevel">
+                  <option value="strong">需求高</option>
+                  <option value="medium">需求中</option>
+                  <option value="weak">需求弱</option>
+                </select>
+              </label>
+              <label>
+                竞争强度
+                <select id="competitionLevel">
+                  <option value="low">竞争低</option>
+                  <option value="medium">竞争中</option>
+                  <option value="high">竞争高</option>
+                </select>
+              </label>
+              <label>
+                风险等级
+                <select id="riskLevel">
+                  <option value="low">低风险</option>
+                  <option value="medium">中风险</option>
+                  <option value="high">高风险</option>
+                </select>
+              </label>
+              <label>
+                履约复杂度
+                <select id="fulfillmentLevel">
+                  <option value="easy">简单</option>
+                  <option value="normal">一般</option>
+                  <option value="hard">复杂</option>
+                </select>
+              </label>
+            </form>
+          </div>
+
+          <div id="analysisResult" class="stack"></div>
+
+          <div class="button-row">
+            <button id="saveAnalysis" class="secondary-button">保存分析</button>
+            <button id="generateContent" class="primary-button">生成上品内容</button>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="content">
+          <div id="contentResult" class="stack"></div>
+          <div class="button-row">
+            <button id="copySelectedTitle" class="secondary-button">复制标题</button>
+            <button id="copyDescription" class="secondary-button">复制描述</button>
+            <button id="copyAll" class="secondary-button">复制全部信息</button>
+            <button id="saveDraft" class="primary-button">保存草稿</button>
+            <button id="markListed" class="ghost-button">标记已上架</button>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="library">
+          <div class="section-card">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">本地商品库</p>
+                <h2>最近采集和待处理商品</h2>
+              </div>
+            </div>
+            <div class="filter-row">
+              <label>
+                平台
+                <select id="libraryPlatformFilter">
+                  <option value="">全部</option>
+                  <option value="xianyu">闲鱼</option>
+                  <option value="1688">1688</option>
+                  <option value="pinduoduo">拼多多</option>
+                  <option value="taobao">淘宝</option>
+                </select>
+              </label>
+              <label>
+                状态
+                <select id="libraryStatusFilter">
+                  <option value="">全部</option>
+                  <option value="待分析">待分析</option>
+                  <option value="待生成内容">待生成内容</option>
+                  <option value="待上架">待上架</option>
+                  <option value="已上架">已上架</option>
+                  <option value="已淘汰">已淘汰</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div id="libraryList" class="stack"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

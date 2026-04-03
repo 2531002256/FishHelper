@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>闲鱼选品上品助手后台</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="options">
+    <div class="dashboard-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img class="brand-logo sidebar-logo" src="assets/logo.png" alt="FishHelper logo" />
+          <div>
+            <p class="eyebrow">FishHelper MVP</p>
+            <h1>运营后台原型</h1>
+            <p class="hero-copy">先把商品库、草稿箱和看板跑通，后面再接云端同步与 AI 服务。</p>
+          </div>
+        </div>
+
+        <nav class="side-nav">
+          <button class="side-link active" data-view="overview">首页看板</button>
+          <button class="side-link" data-view="products">商品库</button>
+          <button class="side-link" data-view="drafts">草稿箱</button>
+          <button class="side-link" data-view="roadmap">落地说明</button>
+        </nav>
+
+        <div class="sidebar-note">
+          当前版本数据全部保存在 `chrome.storage.local`。
+          <br />
+          这意味着它已经能跑通 MVP 流程，但还不适合多人协作和跨设备同步。
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="workspace-header">
+          <div>
+            <p class="eyebrow">本地后台</p>
+            <h2>商品经营视图</h2>
+          </div>
+          <button id="refreshDashboard" class="ghost-button">刷新数据</button>
+        </header>
+
+        <section class="workspace-view active" data-view="overview">
+          <div id="overviewMetrics" class="overview-grid"></div>
+          <div class="two-column">
+            <article class="section-card">
+              <div class="section-header">
+                <div>
+                  <p class="eyebrow">最近 7 天</p>
+                  <h3>采集与高分品趋势</h3>
+                </div>
+              </div>
+              <div id="trendBars" class="trend-chart"></div>
+            </article>
+
+            <article class="section-card">
+              <div class="section-header">
+                <div>
+                  <p class="eyebrow">类目分布</p>
+                  <h3>当前库里最常见的品类</h3>
+                </div>
+              </div>
+              <div id="categoryList" class="stack"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="workspace-view" data-view="products">
+          <div class="toolbar">
+            <label>
+              平台
+              <select id="productPlatformFilter">
+                <option value="">全部</option>
+                <option value="xianyu">闲鱼</option>
+                <option value="1688">1688</option>
+                <option value="pinduoduo">拼多多</option>
+                <option value="taobao">淘宝</option>
+              </select>
+            </label>
+            <label>
+              状态
+              <select id="productStatusFilter">
+                <option value="">全部</option>
+                <option value="待分析">待分析</option>
+                <option value="待生成内容">待生成内容</option>
+                <option value="待上架">待上架</option>
+                <option value="已上架">已上架</option>
+                <option value="已淘汰">已淘汰</option>
+              </select>
+            </label>
+            <label class="grow">
+              搜索
+              <input id="productSearch" type="search" placeholder="搜索商品标题 / 类目" />
+            </label>
+          </div>
+
+          <div class="two-column">
+            <div id="productList" class="stack"></div>
+            <aside id="productDetail" class="section-card detail-panel"></aside>
+          </div>
+        </section>
+
+        <section class="workspace-view" data-view="drafts">
+          <div class="two-column">
+            <div id="draftList" class="stack"></div>
+            <aside id="draftDetail" class="section-card detail-panel"></aside>
+          </div>
+        </section>
+
+        <section class="workspace-view" data-view="roadmap">
+          <article class="section-card prose">
+            <p class="eyebrow">实施说明</p>
+            <h3>这版仓库已经落下来的范围</h3>
+            <ul>
+              <li>浏览器插件：当前商品、选品分析、上品内容、商品库 4 个核心 Tab。</li>
+              <li>本地后台：看板、商品库、草稿箱 3 个运营视图。</li>
+              <li>规则引擎：利润测算、综合评分、标题/描述/标签生成。</li>
+              <li>本地数据层：商品主表、草稿表在 `chrome.storage.local` 中持久化。</li>
+            </ul>
+
+            <h3>下一步建议</h3>
+            <ol>
+              <li>把内容脚本替换为各平台专属解析器，增强 DOM 稳定性。</li>
+              <li>补一个后端 API，把本地状态同步到数据库。</li>
+              <li>把规则生成替换为真正的 AI 内容服务，并加入敏感词审核。</li>
+              <li>对商品库和草稿箱加账号权限、埋点、会员次数控制。</li>
+            </ol>
+
+            <p>更完整的说明文档见仓库里的 `README.md` 和 `docs/详细落地说明.md`。</p>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>
