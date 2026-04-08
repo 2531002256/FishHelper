@@ -1,6 +1,6 @@
 (function () {
   const PLATFORM_RULES = [
-    { key: "xianyu", test: /(goofish|xianyu|2\.taobao)/i },
+    { key: "xianyu", test: /goofish/i },
     { key: "1688", test: /1688/i },
     { key: "pinduoduo", test: /(yangkeduo|pinduoduo)/i },
     { key: "taobao", test: /taobao/i }
@@ -24,6 +24,10 @@
 
   function meta(name, attr = "content") {
     return document.querySelector(`meta[property="${name}"], meta[name="${name}"]`)?.getAttribute(attr) || "";
+  }
+
+  function isXianyuDetailPage(pathname = location.pathname) {
+    return /^\/item(?:\/|$)/i.test(pathname || "");
   }
 
   function toNumber(value) {
@@ -84,6 +88,18 @@
       };
     }
 
+    if (platform === "xianyu" && !isXianyuDetailPage()) {
+      return {
+        supported: true,
+        canCollect: false,
+        isDetailPage: false,
+        platform,
+        hostname: location.hostname,
+        url: location.href,
+        reason: "当前是闲鱼浏览页，请进入商品详情页后再采集。"
+      };
+    }
+
     const jsonLd = extractJsonLd();
     const title = (
       jsonLd?.name ||
@@ -124,8 +140,12 @@
     const salesText = findKeywordValue(["已售", "销量", "人付款", "成交"]);
     const ratingText = findKeywordValue(["评价", "评论"]);
 
+    const supported = Boolean(title);
+
     return {
-      supported: Boolean(title),
+      supported,
+      canCollect: supported,
+      isDetailPage: true,
       platform,
       hostname: location.hostname,
       url: location.href,
@@ -137,7 +157,8 @@
       location: locationText,
       sales: toNumber(salesText),
       ratingCount: toNumber(ratingText),
-      images: collectImages(jsonLd)
+      images: collectImages(jsonLd),
+      reason: supported ? "" : "当前页面暂未识别到商品信息，请确认已进入商品详情页后重试。"
     };
   }
 

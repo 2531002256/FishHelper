@@ -26,6 +26,7 @@ let state = null;
 let activeProduct = null;
 let activeAnalysis = null;
 let activeContent = null;
+let activePageState = null;
 let selectedTitle = "";
 
 const formEls = {
@@ -59,6 +60,21 @@ async function parseActivePage() {
 function setBanner(message, tone = "info") {
   statusBanner.className = `status-banner ${tone}`;
   statusBanner.textContent = message;
+}
+
+function resetActiveWork() {
+  activeProduct = null;
+  activeAnalysis = null;
+  activeContent = null;
+  selectedTitle = "";
+}
+
+function isCollectBlockedPage(pageState = activePageState) {
+  return Boolean(pageState?.supported && pageState?.canCollect === false);
+}
+
+function getBlockedCollectReason(pageState = activePageState) {
+  return pageState?.reason || "当前页面不是可采集的商品详情页。";
 }
 
 function switchTab(tab) {
@@ -101,6 +117,17 @@ function renderMetrics() {
 
 function renderCurrentProduct() {
   if (!activeProduct) {
+    if (isCollectBlockedPage()) {
+      currentProductCard.innerHTML = `
+        <article class="section-card">
+          <p class="eyebrow">已识别闲鱼浏览页</p>
+          <h2>当前页面还不能采集</h2>
+          <p class="hero-copy">请先点进闲鱼商品详情页后再采集，详情页链接应为 https://www.goofish.com/item...</p>
+        </article>
+      `;
+      return;
+    }
+
     currentProductCard.innerHTML = `
       <article class="section-card">
         <p class="eyebrow">未识别到商品</p>
@@ -272,10 +299,17 @@ function renderAll() {
 async function refreshActiveProduct() {
   setBanner("正在重新识别当前页面...", "info");
   const parsed = await parseActivePage();
+  activePageState = parsed;
+
   if (!parsed.supported) {
-    activeProduct = null;
-    activeAnalysis = null;
-    activeContent = null;
+    resetActiveWork();
+    renderAll();
+    setBanner(parsed.reason || "当前页面暂不支持解析", "warning");
+    return;
+  }
+
+  if (parsed.canCollect === false) {
+    resetActiveWork();
     renderAll();
     setBanner(parsed.reason || "当前页面暂不支持解析", "warning");
     return;
@@ -345,8 +379,12 @@ function bindEvents() {
   document.getElementById("openDashboard").addEventListener("click", () => chrome.runtime.openOptionsPage());
 
   document.getElementById("collectProduct").addEventListener("click", async () => {
+    if (isCollectBlockedPage()) {
+      setBanner(getBlockedCollectReason(), "warning");
+      return;
+    }
     if (!activeProduct) {
-      setBanner("请先识别一个商品页面。", "warning");
+      setBanner("请先打开并识别一个商品详情页。", "warning");
       return;
     }
     const result = await persistActiveWork();
@@ -369,7 +407,7 @@ function bindEvents() {
 
   document.getElementById("saveAnalysis").addEventListener("click", async () => {
     if (!activeProduct) {
-      setBanner("请先识别一个商品页面。", "warning");
+      setBanner("请先打开并识别一个商品详情页。", "warning");
       return;
     }
     activeAnalysis = calculateAnalysis(activeProduct, readAnalysisForm());
@@ -380,7 +418,7 @@ function bindEvents() {
 
   document.getElementById("generateContent").addEventListener("click", async () => {
     if (!activeProduct) {
-      setBanner("请先识别一个商品页面。", "warning");
+      setBanner("请先打开并识别一个商品详情页。", "warning");
       return;
     }
     activeAnalysis = calculateAnalysis(activeProduct, readAnalysisForm());
@@ -421,7 +459,7 @@ function bindEvents() {
 
   document.getElementById("saveDraft").addEventListener("click", async () => {
     if (!activeProduct) {
-      setBanner("请先识别一个商品页面。", "warning");
+      setBanner("请先打开并识别一个商品详情页。", "warning");
       return;
     }
     const textarea = document.getElementById("generatedDescription");
@@ -474,6 +512,7 @@ function bindEvents() {
     if (!product) {
       return;
     }
+    activePageState = null;
     activeProduct = product;
     fillAnalysisForm(product);
     activeAnalysis = product.analysis || calculateAnalysis(product, readAnalysisForm());
